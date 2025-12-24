@@ -1,56 +1,79 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 
+type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snacks";
+
 export default function NutritionScreen() {
+  const [selectedMeal, setSelectedMeal] = useState<MealType>("Breakfast");
+
+  // Sample data
+  const SUGGESTED_MEAL = {
+    title: "Paneer Bhurji with Roti",
+    calories: 450,
+    image: "https://i.imgur.com/0ZQZ5cE.jpeg",
+    description: "High protein, traditional Indian meal to fuel your morning.",
+  };
+
+  const FEATURED_RECIPES = [
+    { title: "Masala Oats", calories: 300, image: "https://i.imgur.com/n8eEJ9k.jpeg" },
+    { title: "Chicken Curry", calories: 520, image: "https://i.imgur.com/zg1kdTI.jpeg" },
+    { title: "Vegetable Pulao", calories: 400, image: "https://i.imgur.com/0ZQZ5cE.jpeg" },
+  ];
+
+  const SUPPLEMENTS = [
+    "Whey Protein - 25g",
+    "Vitamin D - 1000 IU",
+    "Omega-3 - 1 capsule",
+  ];
+
+  const MEAL_TYPES: MealType[] = ["Breakfast", "Lunch", "Dinner", "Snacks"];
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       
       {/* Header */}
       <Text style={styles.header}>Nutrition</Text>
       <Text style={styles.subheader}>
-        Fuel your body the right way. Track meals, explore healthy recipes, and learn what your body needs.
+        Track your meals, explore recipes, and fuel your body the right way.
       </Text>
 
-      {/* Daily Summary Card */}
-      <View style={styles.summaryCard}>
-        <Text style={styles.summaryTitle}>Today’s Intake</Text>
-        <View style={styles.summaryRow}>
-          <View style={styles.summaryItem}>
-            <Text style={styles.summaryNumber}>1450</Text>
-            <Text style={styles.summaryLabel}>Calories</Text>
-          </View>
-          <View style={styles.summaryItem}>
-            <Text style={styles.summaryNumber}>98g</Text>
-            <Text style={styles.summaryLabel}>Protein</Text>
-          </View>
-          <View style={styles.summaryItem}>
-            <Text style={styles.summaryNumber}>160g</Text>
-            <Text style={styles.summaryLabel}>Carbs</Text>
-          </View>
-        </View>
+      {/* Meal Switcher */}
+      <View style={styles.mealSwitcher}>
+        {MEAL_TYPES.map((meal) => (
+          <TouchableOpacity
+            key={meal}
+            style={[
+              styles.mealButton,
+              selectedMeal === meal && styles.mealButtonActive,
+            ]}
+            onPress={() => setSelectedMeal(meal)}
+          >
+            <Text
+              style={[
+                styles.mealButtonText,
+                selectedMeal === meal && styles.mealButtonTextActive,
+              ]}
+            >
+              {meal}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
-      {/* Quick Actions */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        
-        <View style={styles.actionRow}>
-          <TouchableOpacity style={styles.actionCard}>
-            <Text style={styles.actionText}>Log Meal</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionCard}>
-            <Text style={styles.actionText}>Scan Food</Text>
-          </TouchableOpacity>
-        </View>
+      {/* Suggested Meal */}
+      <View style={styles.suggestedCard}>
+        <Text style={styles.cardTitle}>Suggested {selectedMeal}</Text>
+        <Image source={{ uri: SUGGESTED_MEAL.image }} style={styles.suggestedImg} />
+        <Text style={styles.mealName}>{SUGGESTED_MEAL.title}</Text>
+        <Text style={styles.mealDesc}>{SUGGESTED_MEAL.description}</Text>
+        <Text style={styles.mealCalories}>{SUGGESTED_MEAL.calories} kcal</Text>
       </View>
 
-      {/* Recommended Recipes */}
+      {/* Featured Recipes */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Recommended Recipes</Text>
-
+        <Text style={styles.sectionTitle}>Featured Recipes</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {RECIPE_DATA.map((item, idx) => (
+          {FEATURED_RECIPES.map((item, idx) => (
             <TouchableOpacity key={idx} style={styles.recipeCard}>
               <Image source={{ uri: item.image }} style={styles.recipeImg} />
               <Text style={styles.recipeTitle}>{item.title}</Text>
@@ -60,81 +83,67 @@ export default function NutritionScreen() {
         </ScrollView>
       </View>
 
-      {/* Nutrition Tips */}
+      {/* Supplements */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Tips</Text>
-        {TIPS.map((t, i) => (
-          <View key={i} style={styles.tipCard}>
-            <Text style={styles.tipText}>{t}</Text>
+        <Text style={styles.sectionTitle}>Supplements</Text>
+        {SUPPLEMENTS.map((s, i) => (
+          <View key={i} style={styles.supplementCard}>
+            <Text style={styles.supplementText}>{s}</Text>
           </View>
         ))}
       </View>
-
     </ScrollView>
   );
 }
-
-const RECIPE_DATA = [
-  { title: "High-Protein Bowl", calories: 480, image: "https://i.imgur.com/0ZQZ5cE.jpeg" },
-  { title: "Avocado Toast", calories: 320, image: "https://i.imgur.com/n8eEJ9k.jpeg" },
-  { title: "Chicken Meal Prep", calories: 520, image: "https://i.imgur.com/zg1kdTI.jpeg" },
-];
-
-const TIPS = [
-  "Eat at least 0.7–1g of protein per lb of bodyweight.",
-  "Avoid liquid calories unless it’s a shake.",
-  "Aim for whole foods 80% of the time.",
-  "Hydrate — 2–3 liters a day minimum."
-];
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#ffffff", padding: 20 },
 
   header: { fontSize: 32, fontWeight: "700", marginBottom: 6 },
-  subheader: { fontSize: 15, opacity: 0.6, marginBottom: 25 },
+  subheader: { fontSize: 15, opacity: 0.6, marginBottom: 20 },
 
-  summaryCard: {
+  mealSwitcher: { flexDirection: "row", marginBottom: 20, justifyContent: "space-between" },
+  mealButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: "#EFEFEF",
+  },
+  mealButtonActive: { backgroundColor: "#4A90E2" },
+  mealButtonText: { fontSize: 14, fontWeight: "600", color: "#333" },
+  mealButtonTextActive: { color: "#fff" },
+
+  suggestedCard: {
     backgroundColor: "#F8F8F8",
     borderRadius: 16,
-    padding: 20,
-    marginBottom: 28
+    padding: 16,
+    marginBottom: 28,
   },
-  summaryTitle: { fontSize: 18, fontWeight: "600", marginBottom: 12 },
-  summaryRow: { flexDirection: "row", justifyContent: "space-between" },
-  summaryItem: { alignItems: "center" },
-  summaryNumber: { fontSize: 22, fontWeight: "700" },
-  summaryLabel: { fontSize: 13, opacity: 0.6 },
+  cardTitle: { fontSize: 18, fontWeight: "600", marginBottom: 10 },
+  suggestedImg: { width: "100%", height: 150, borderRadius: 12, marginBottom: 12 },
+  mealName: { fontSize: 16, fontWeight: "600", marginBottom: 4 },
+  mealDesc: { fontSize: 13, opacity: 0.7, marginBottom: 4 },
+  mealCalories: { fontSize: 12, opacity: 0.6 },
 
   section: { marginBottom: 28 },
   sectionTitle: { fontSize: 20, fontWeight: "600", marginBottom: 14 },
-
-  actionRow: { flexDirection: "row", gap: 12 },
-  actionCard: {
-    flex: 1,
-    backgroundColor: "#EFEFEF",
-    padding: 18,
-    borderRadius: 14,
-    alignItems: "center"
-  },
-  actionText: { fontSize: 16, fontWeight: "600" },
 
   recipeCard: {
     width: 160,
     marginRight: 14,
     backgroundColor: "#F4F4F4",
     borderRadius: 14,
-    paddingBottom: 12
+    paddingBottom: 12,
   },
   recipeImg: { width: "100%", height: 100, borderTopLeftRadius: 14, borderTopRightRadius: 14 },
   recipeTitle: { paddingTop: 10, fontWeight: "600", paddingLeft: 10 },
   recipeCalories: { paddingLeft: 10, opacity: 0.6, fontSize: 12 },
 
-  tipCard: {
+  supplementCard: {
     backgroundColor: "#FAFAFA",
     padding: 14,
     borderRadius: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
-  tipText: { fontSize: 14, opacity: 0.8 }
+  supplementText: { fontSize: 14, opacity: 0.8 },
 });
-
