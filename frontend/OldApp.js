@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+/*import React, { useState } from 'react';
 import { 
   SafeAreaView, View, Text, ScrollView, StyleSheet, TouchableOpacity 
 } from 'react-native';
@@ -43,7 +43,7 @@ export default function App() {
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* GLOBAL HEADER LOGIC */}
-      <View style={styles.headerContainer}>
+  /*    <View style={styles.headerContainer}>
         {activeTab === 'Home' ? (
           <View style={styles.brandContainer}>
             <View>
@@ -57,12 +57,12 @@ export default function App() {
       </View>
 
       {/* DYNAMIC CONTENT AREA */}
-      <View style={{ flex: 1 }}>
+/*      <View style={{ flex: 1 }}>
         {renderContent()}
       </View>
 
       {/* NAVIGATION BAR */}
-      <View style={styles.tabBar}>
+   /*   <View style={styles.tabBar}>
         <TabItem label="Home" icon={<Flame size={18} />} active={activeTab} set={setActiveTab} />
         <TabItem label="Workout" icon={<Dumbbell size={18} />} active={activeTab} set={setActiveTab} />
         <TabItem label="Nutrition" icon={<Utensils size={18} />} active={activeTab} set={setActiveTab} />
@@ -99,4 +99,4 @@ const styles = StyleSheet.create({
   tabLabel: { fontSize: 9, marginTop: 4, fontWeight: 'bold' },
   placeholder: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   placeholderText: { color: COLORS.muted, fontSize: 14 }
-});
+});*/
