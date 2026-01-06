@@ -1,130 +1,131 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Image } from "react-native";
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-export default function HomeScreen({ navigation }: any) {
+const { width } = Dimensions.get('window');
 
-  // Quick actions
+// JUNOON Branding Colors
+const COLORS = {
+  saffron: '#E97451',
+  leaf: '#556B2F',
+  gold: '#B5A642',
+  cream: '#FFF9F5', // Beige background
+  dark: '#1C1C1E',
+  muted: '#8E8E93',
+  white: '#FFFFFF',
+};
+
+export default function HomeScreen({ navigation }) {
+  // Navigation actions
   const actions = [
-    { title: "Today's Workout", screen: "Workout" },
-    { title: "Meal Plan", screen: "Nutrition" },
-    { title: "Classes", screen: "Classes" },
-    { title: "Meditation", screen: "Meditation" },
-    { title: "Education", screen: "Education" },
-  ];
-
-  // Sample recommendations
-  const recommendations = [
-    { title: "Try Paneer Bhurji for breakfast", image: "https://i.imgur.com/0ZQZ5cE.jpeg" },
-    { title: "20 min Yoga Flow for flexibility", image: "https://i.imgur.com/n8eEJ9k.jpeg" },
-    { title: "Meditation: 10 min stress relief", image: "https://i.imgur.com/zg1kdTI.jpeg" },
+    { title: "Today's Workout", subText: "AI Generated", icon: "dumbbell", color: COLORS.leaf, screen: "Workout" },
+    { title: "Meal Plan", subText: "Ayurvedic", icon: "silverware-fork-knife", color: COLORS.saffron, screen: "Nutrition" },
+    { title: "Meditation", subText: "10 min Session", icon: "flower", color: COLORS.muted, screen: "Meditation" },
+    { title: "Learn", subText: "Wellness Tips", icon: "book-open-variant", color: COLORS.muted, screen: "Education" },
   ];
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-
-      {/* Header with Profile */}
+      
+      {/* HEADER SECTION */}
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Welcome back!</Text>
+        <View>
+          <Text style={styles.welcomeText}>Welcome back!</Text>
+          <Text style={styles.userName}>Test User</Text>
+        </View>
         <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-          <Ionicons name="person-circle-outline" size={36} color="#4A90E2" />
+          <Ionicons name="person-circle" size={42} color={COLORS.dark} />
         </TouchableOpacity>
       </View>
+      <Text style={styles.tagline}>Ready to continue your wellness journey?</Text>
 
-      {/* Weekly Progress Banner */}
-      <View style={styles.progressBanner}>
-        <Text style={styles.progressTitle}>This Week's Goals</Text>
-        <Text style={styles.progressText}>3/5 Workouts Completed</Text>
-        <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBarFill, { width: "60%" }]} />
+      {/* 7-DAY STREAK CARD */}
+      <View style={styles.streakCard}>
+        <View>
+          <Text style={styles.streakLabel}>Daily Streak</Text>
+          <Text style={styles.streakCount}>7 days</Text>
+          <View style={styles.dotRow}>
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <View key={i} style={styles.activeDot} />
+            ))}
+            <View style={styles.inactiveDot} />
+          </View>
         </View>
+        <MaterialCommunityIcons name="fire" size={48} color={COLORS.saffron} />
       </View>
 
-      {/* Quick Actions */}
-      <View style={styles.quickActions}>
+      {/* QUICK ACTIONS GRID */}
+      <Text style={styles.sectionTitle}>Quick Actions</Text>
+      <View style={styles.actionGrid}>
         {actions.map((action, idx) => (
-          <TouchableOpacity
-            key={idx}
-            style={styles.actionButton}
+          <TouchableOpacity 
+            key={idx} 
+            style={styles.actionCard} 
             onPress={() => navigation.navigate(action.screen)}
           >
-            <Text style={styles.actionText}>{action.title}</Text>
+            <View style={styles.iconCircle}>
+              <MaterialCommunityIcons name={action.icon} size={24} color={action.color} />
+            </View>
+            <Text style={styles.actionTitle}>{action.title}</Text>
+            <Text style={styles.actionSub}>{action.subText}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* Recommendations */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Today's Recommendations</Text>
-        {recommendations.map((item, idx) => (
-          <View key={idx} style={styles.recommendationCard}>
-            <Image source={{ uri: item.image }} style={styles.recommendationImg} />
-            <Text style={styles.recommendationText}>{item.title}</Text>
-          </View>
-        ))}
-      </View>
+      {/* RECOMMENDATIONS SECTION */}
+      <Text style={styles.sectionTitle}>Today's Recommendations</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.recScroll}>
+        <TouchableOpacity style={[styles.recCard, { backgroundColor: '#91C788' }]}>
+          <MaterialCommunityIcons name="lightning-bolt" size={24} color="white" style={styles.recIcon} />
+          <Text style={styles.recText}>{"Morning\nYoga"}</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={[styles.recCard, { backgroundColor: '#FFA500' }]}>
+          <MaterialCommunityIcons name="food-apple" size={24} color="white" style={styles.recIcon} />
+          <Text style={styles.recText}>{"Ayurvedic\nBreakfast"}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.recCard, { backgroundColor: '#4A90E2' }]}>
+          <MaterialCommunityIcons name="wind" size={24} color="white" style={styles.recIcon} />
+          <Text style={styles.recText}>{"Breathing\nExercise"}</Text>
+        </TouchableOpacity>
+      </ScrollView>
 
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 20 },
+  container: { flex: 1, backgroundColor: COLORS.cream, padding: 20 },
+  headerContainer: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 20 },
+  welcomeText: { fontSize: 16, color: COLORS.muted, fontWeight: "500" },
+  userName: { fontSize: 28, fontWeight: "bold", color: COLORS.dark },
+  tagline: { fontSize: 14, color: COLORS.muted, marginTop: 8, marginBottom: 20 },
+  
+  streakCard: { 
+    backgroundColor: COLORS.white, borderRadius: 24, padding: 20, 
+    flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+    elevation: 4, shadowColor: "#000", shadowOpacity: 0.1, shadowRadius: 10, marginBottom: 25 
+  },
+  streakLabel: { color: COLORS.muted, fontSize: 14, fontWeight: "600" },
+  streakCount: { fontSize: 26, fontWeight: "bold", color: COLORS.saffron, marginVertical: 4 },
+  dotRow: { flexDirection: "row", marginTop: 6 },
+  activeDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: COLORS.saffron, marginRight: 6 },
+  inactiveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#E5E5EA" },
 
-  headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
+  sectionTitle: { fontSize: 18, fontWeight: "bold", color: COLORS.dark, marginBottom: 15 },
+  
+  actionGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
+  actionCard: { 
+    width: "48%", backgroundColor: COLORS.white, borderRadius: 20, padding: 16, 
+    marginBottom: 15, alignItems: "center", elevation: 2, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 5 
   },
-  header: { fontSize: 28, fontWeight: "700" },
+  iconCircle: { width: 48, height: 48, borderRadius: 24, backgroundColor: "#F2F2F7", justifyContent: "center", alignItems: "center", marginBottom: 10 },
+  actionTitle: { fontSize: 13, fontWeight: "bold", color: COLORS.dark, textAlign: "center" },
+  actionSub: { fontSize: 10, color: COLORS.muted, marginTop: 2 },
 
-  progressBanner: {
-    backgroundColor: "#F8F8F8",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 25,
-  },
-  progressTitle: { fontSize: 18, fontWeight: "600", marginBottom: 4 },
-  progressText: { fontSize: 14, opacity: 0.7, marginBottom: 8 },
-  progressBarBackground: {
-    width: "100%",
-    height: 10,
-    backgroundColor: "#E0E0E0",
-    borderRadius: 5,
-  },
-  progressBarFill: {
-    height: 10,
-    backgroundColor: "#4A90E2",
-    borderRadius: 5,
-  },
-
-  quickActions: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginBottom: 30,
-  },
-  actionButton: {
-    width: "48%",
-    backgroundColor: "#EFEFEF",
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 12,
-    alignItems: "center",
-  },
-  actionText: { fontSize: 16, fontWeight: "600", textAlign: "center" },
-
-  section: { marginBottom: 30 },
-  sectionTitle: { fontSize: 20, fontWeight: "600", marginBottom: 14 },
-
-  recommendationCard: {
-    flexDirection: "row",
-    backgroundColor: "#F8F8F8",
-    borderRadius: 12,
-    marginBottom: 12,
-    overflow: "hidden",
-  },
-  recommendationImg: { width: 80, height: 80 },
-  recommendationText: { flex: 1, padding: 12, fontSize: 14, fontWeight: "500" },
+  recScroll: { marginBottom: 40 },
+  recCard: { width: 130, height: 160, borderRadius: 22, padding: 16, marginRight: 15, justifyContent: "flex-end" },
+  recIcon: { position: "absolute", top: 16, left: 16 },
+  recText: { color: "white", fontWeight: "bold", fontSize: 14, lineHeight: 20 }
 });
