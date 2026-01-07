@@ -1,138 +1,177 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Flat Boy } from 'react-native';
-import { PlayCircle, Calendar, Filter, Clock, Users } from 'lucide-react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { Users, ChevronRight, Search, X, Flower } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const COLORS = {
+  junoonDark: '#2D2926',
   saffron: '#E97451',
-  earth: '#8B4513',
+  gold: '#B5A642',
   cream: '#FFF9F5',
-  dark: '#1A1A1A', // Dark theme for the Live Schedule section
-  muted: '#7A7A7A'
+  white: '#FFFFFF',
 };
 
-const ClassesScreen = () => {
-  const [showLive, setShowLive] = useState(false);
-
-  // Pre-recorded Categories [cite: 23, 24]
-  const categories = [
-    { id: '1', name: 'Cardio', icon: 'zap' },
-    { id: '2', name: 'Yoga', icon: 'pulao' },
-    { id: '3', name: 'Meditation', icon: 'moon' },
-    { id: '4', name: 'Breathing', icon: 'wind' },
-    { id: '5', name: 'Weight Training', icon: 'dumbbell' }
-  ];
+export default function ClassesScreen() {
+  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const [selectedDay, setSelectedDay] = useState('TUE');
+  const [filterQuery, setFilterQuery] = useState('');
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        <Text style={styles.headerTitle}>Classes</Text>
+    <LinearGradient colors={['#FFF9F5', '#FDEEE0', '#F9E4D4']} style={{ flex: 1 }}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        
+        {/* BRANDED HEADER */}
+        <View style={styles.headerContainer}>
+           <Text style={styles.header}>Classes</Text>
+           <Text style={styles.subHeader}>LIVE SESSIONS • ON-DEMAND</Text>
+        </View>
 
-        {/* 1. Pre-recorded Library Section [cite: 23, 24, 66] */}
-        <Text style={styles.sectionLabel}>Library</Text>
-        <View style={styles.categoryGrid}>
-          {categories.map((cat) => (
-            <TouchableOpacity key={cat.id} style={styles.categoryBtn}>
-              <PlayCircle color={COLORS.saffron} size={20} />
-              <Text style={styles.categoryBtnText}>{cat.name}</Text>
+        {/* 1. TYPEABLE FILTER CAPSULE */}
+        <View style={styles.filterSection}>
+          <View style={styles.typeableFilter}>
+            <Search color={COLORS.gold} size={18} style={styles.searchIcon} />
+            <TextInput 
+              style={styles.filterInput}
+              placeholder="Filter by Yoga, Meditation, or Master..."
+              placeholderTextColor="rgba(45, 41, 38, 0.4)"
+              value={filterQuery}
+              onChangeText={(text) => setFilterQuery(text)}
+            />
+            {filterQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setFilterQuery('')}>
+                <X color={COLORS.junoonDark} size={18} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+
+        {/* 2. CLEAN SEPTEMBER SCHEDULE HEADER */}
+        <View style={styles.scheduleHeaderRow}>
+          <View style={styles.goldLine} />
+          <Text style={styles.premiumHeaderText}>September Schedule</Text>
+          <View style={styles.goldLine} />
+        </View>
+
+        {/* 3. CALENDAR ROW */}
+        <View style={styles.calendarRow}>
+          {days.map((day) => (
+            <TouchableOpacity 
+              key={day} 
+              onPress={() => setSelectedDay(day)}
+              style={[styles.dayCard, selectedDay === day && styles.activeDayCard]}
+            >
+              <Text style={[styles.dayText, selectedDay === day && styles.activeDayText]}>{day}</Text>
+              {selectedDay === day && <View style={styles.dayDot} />}
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* 2. Live Class Schedule Button [cite: 25, 26, 67] */}
-        <TouchableOpacity 
-          style={styles.liveToggleBtn} 
-          onPress={() => setShowLive(!showLive)}
-        >
-          <Calendar color="white" size={20} />
-          <Text style={styles.liveToggleText}>View Live Class Schedule</Text>
-        </TouchableOpacity>
+        {/* 4. STRUCTURED TIMELINE SCHEDULE */}
+        <View style={styles.timelineWrapper}>
+          <View style={styles.verticalTimelineLine} />
+          
+          <ScheduleCard 
+            time="8:00 AM" 
+            duration="45 min" 
+            title="Surya Namaskar Ritual" 
+            instructor="Christopher Z." 
+            joined="12 Joined" 
+            accent={COLORS.saffron}
+          />
 
-        {/* 3. Lifetime Fitness Style Schedule  */}
-        {showLive && (
-          <View style={styles.liveScheduleContainer}>
-            <View style={styles.scheduleHeader}>
-              <Text style={styles.monthText}>September</Text>
-              <Filter color={COLORS.saffron} size={20} />
-            </View>
+          <ScheduleCard 
+            time="5:30 PM" 
+            duration="30 min" 
+            title="Pranayama Basics" 
+            instructor="Ananya R." 
+            joined="12 Joined" 
+            accent={COLORS.gold}
+          />
 
-            {/* Date Picker Strip [cite: 30, 33, 34] */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dateStrip}>
-              {[21, 22, 23, 24, 25, 26, 27].map((day) => (
-                <View key={day} style={day === 24 ? styles.activeDay : styles.inactiveDay}>
-                  <Text style={day === 24 ? styles.activeDayText : styles.dayText}>{day}</Text>
-                </View>
-              ))}
-            </ScrollView>
-
-            {/* Live Class Entries [cite: 35, 37, 39] */}
-            <LiveClassItem 
-              time="6:00 PM" 
-              duration="45 min" 
-              title="Hatha Yoga: Sun Salutations" 
-              instructor="with Arjav" 
-            />
-            <LiveClassItem 
-              time="7:30 PM" 
-              duration="30 min" 
-              title="Group Pranayama Meditation" 
-              instructor="with Meera" 
-            />
-          </View>
-        )}
+          <ScheduleCard 
+            time="7:00 PM" 
+            duration="60 min" 
+            title="Deep Dhyana Flow" 
+            instructor="Michael S." 
+            joined="12 Joined" 
+            accent={COLORS.junoonDark}
+          />
+        </View>
       </ScrollView>
-    </SafeAreaView>
+    </LinearGradient>
   );
-};
+}
 
-const LiveClassItem = ({ time, duration, title, instructor }) => (
-  <View style={styles.classEntry}>
-    <View style={styles.timeCol}>
-      <Text style={styles.timeText}>{time}</Text>
-      <Text style={styles.durationText}>{duration}</Text>
+const ScheduleCard = ({ time, duration, title, instructor, joined, accent }) => (
+  <View style={styles.timelineRow}>
+    <View style={styles.timeContainer}>
+      <Text style={styles.timeMain}>{time}</Text>
+      <Text style={styles.timeSub}>{duration}</Text>
     </View>
-    <View style={styles.detailsCol}>
-      <Text style={styles.classTitle}>{title}</Text>
-      <Text style={styles.instructorText}>{instructor}</Text>
-      <TouchableOpacity style={styles.registerBtn}>
-        <Text style={styles.registerText}>Register</Text>
-      </TouchableOpacity>
-    </View>
+
+    <TouchableOpacity style={styles.cardContainer}>
+      <LinearGradient colors={['#FFFFFF', '#FFF9F5']} style={styles.scheduleCard}>
+        <View style={[styles.statusAccent, { backgroundColor: accent }]} />
+        <View style={styles.cardInfo}>
+          <Text style={styles.cardTitle}>{title}</Text>
+          <Text style={[styles.instructorText, { color: accent }]}>{instructor}</Text>
+          <View style={styles.metaRow}>
+            <Users size={12} color="#8E8E93" />
+            <Text style={styles.metaText}>{joined}</Text>
+          </View>
+        </View>
+        <ChevronRight size={18} color={COLORS.gold} strokeWidth={2.5} />
+      </LinearGradient>
+    </TouchableOpacity>
   </View>
 );
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: COLORS.cream },
-  container: { padding: 20 },
-  headerTitle: { fontSize: 28, fontWeight: 'bold', color: COLORS.earth, marginBottom: 20 },
-  sectionLabel: { fontSize: 18, fontWeight: '700', marginBottom: 15 },
-  categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  categoryBtn: { 
-    width: '48%', backgroundColor: 'white', padding: 15, borderRadius: 12, 
-    flexDirection: 'row', alignItems: 'center', marginBottom: 12, elevation: 2 
-  },
-  categoryBtnText: { marginLeft: 10, fontWeight: '600', color: COLORS.earth },
-  liveToggleBtn: { 
-    backgroundColor: COLORS.earth, flexDirection: 'row', padding: 18, 
-    borderRadius: 15, justifyContent: 'center', alignItems: 'center', marginVertical: 20 
-  },
-  liveToggleText: { color: 'white', fontWeight: 'bold', marginLeft: 10 },
-  liveScheduleContainer: { backgroundColor: COLORS.dark, borderRadius: 20, padding: 20, marginBottom: 30 },
-  scheduleHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  monthText: { color: 'white', fontSize: 20, fontWeight: 'bold' },
-  dateStrip: { flexDirection: 'row', marginBottom: 25 },
-  inactiveDay: { padding: 10, alignItems: 'center', width: 45 },
-  activeDay: { backgroundColor: COLORS.saffron, borderRadius: 25, padding: 10, alignItems: 'center', width: 45 },
-  dayText: { color: '#888' },
-  activeDayText: { color: 'white', fontWeight: 'bold' },
-  classEntry: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#333', paddingVertical: 20 },
-  timeCol: { width: '25%' },
-  timeText: { color: 'white', fontWeight: 'bold' },
-  durationText: { color: '#666', fontSize: 12 },
-  detailsCol: { width: '75%', paddingLeft: 15, borderLeftWidth: 2, borderLeftColor: COLORS.saffron },
-  classTitle: { color: 'white', fontSize: 16, fontWeight: '600' },
-  instructorText: { color: COLORS.saffron, fontSize: 13, marginTop: 4 },
-  registerBtn: { marginTop: 10, alignSelf: 'flex-start' },
-  registerText: { color: '#4A90E2', fontWeight: 'bold' }
-});
+  container: { flex: 1, paddingHorizontal: 15 },
+  headerContainer: { marginTop: 60, marginBottom: 10, alignItems: 'center' },
+  header: { fontSize: 38, fontWeight: '300', color: COLORS.junoonDark, fontFamily: 'serif' },
+  subHeader: { fontSize: 8, color: COLORS.gold, fontWeight: 'bold', letterSpacing: 2, fontFamily: 'monospace' },
 
-export default ClassesScreen;
+  filterSection: { marginVertical: 20, paddingHorizontal: 5 },
+  typeableFilter: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: 'white', 
+    borderRadius: 30, 
+    paddingHorizontal: 20, 
+    height: 55,
+    borderWidth: 1,
+    borderColor: 'rgba(181, 166, 66, 0.15)',
+    elevation: 5,
+    shadowColor: COLORS.gold,
+    shadowOpacity: 0.1,
+  },
+  searchIcon: { marginRight: 12 },
+  filterInput: { flex: 1, color: COLORS.junoonDark, fontSize: 13, fontFamily: 'monospace', letterSpacing: 0.5 },
+
+  scheduleHeaderRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 25 },
+  goldLine: { flex: 1, height: 1, backgroundColor: 'rgba(181, 166, 66, 0.2)' },
+  premiumHeaderText: { fontSize: 9, fontWeight: '700', color: COLORS.gold, letterSpacing: 3, textTransform: 'uppercase', paddingHorizontal: 15, fontFamily: 'serif' },
+
+  calendarRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 30 },
+  dayCard: { alignItems: 'center', width: 45, paddingVertical: 10 },
+  activeDayCard: { backgroundColor: 'rgba(255, 255, 255, 0.6)', borderRadius: 12 },
+  dayText: { fontSize: 10, fontWeight: '700', color: '#8E8E93', letterSpacing: 1 },
+  activeDayText: { color: COLORS.junoonDark },
+  dayDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: COLORS.saffron, marginTop: 4 },
+
+  timelineWrapper: { paddingLeft: 5, paddingBottom: 120 },
+  verticalTimelineLine: { position: 'absolute', left: 78, top: 0, bottom: 0, width: 1, backgroundColor: 'rgba(181, 166, 66, 0.2)', zIndex: -1 },
+  timelineRow: { flexDirection: 'row', marginBottom: 25, alignItems: 'center' },
+  timeContainer: { width: 75 },
+  timeMain: { fontSize: 14, fontWeight: '700', color: COLORS.junoonDark, fontFamily: 'serif' },
+  timeSub: { fontSize: 9, color: '#8E8E93', fontWeight: 'bold' },
+  cardContainer: { flex: 1, elevation: 3, shadowColor: COLORS.gold, shadowOpacity: 0.05 },
+  scheduleCard: { flexDirection: 'row', alignItems: 'center', borderRadius: 24, padding: 18 },
+  statusAccent: { width: 4, height: 35, borderRadius: 10, marginRight: 15 },
+  cardInfo: { flex: 1 },
+  cardTitle: { fontSize: 16, fontWeight: '400', color: COLORS.junoonDark, fontFamily: 'serif' },
+  instructorText: { fontSize: 10, fontWeight: '700', marginTop: 4, fontFamily: 'monospace', textTransform: 'uppercase' },
+  metaRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
+  metaText: { fontSize: 10, color: '#8E8E93', fontWeight: 'bold', marginLeft: 6 },
+});
